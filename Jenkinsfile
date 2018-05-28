@@ -12,7 +12,7 @@ node {
     }*/
 
     stage('Checkout') {
-        checkout scm/KubeBranch
+        checkout scm
     }
 
     stage('Build'){
@@ -20,7 +20,7 @@ node {
     }
    
    stage('Push') {
-        push scm/master
+       push origin master
     }
 
   /*  stage('Sonar'){

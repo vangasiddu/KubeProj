@@ -15,10 +15,15 @@ node {
         checkout scm
     }
 
-   /* stage('Build'){
+    stage('Build'){
        bat "mvn clean install"
     }
-    stage('Sonar'){
+   
+   stage('Push') {
+        push master
+    }
+
+  /*  stage('Sonar'){
         try {
             "mvn sonar:sonar"
         } catch(error){
@@ -52,27 +57,27 @@ node {
 
 def imagePrune(containerName){
     try {
-       sh "docker image prune -f"
+       bat "docker image prune -f"
        //bat "docker stop $containerName"
     } catch(error){}
 }
 
 def imageBuild(containerName, tag){
     
-    sh "docker build -t $containerName:$tag  -t $containerName --pull --no-cache ."
+    bat "docker build -t $containerName:$tag  -t $containerName --pull --no-cache ."
     echo "Image build complete"
 }
 
 def pushToImage(containerName, tag, dockerUser, dockerPassword){
-    sh "docker login -u $dockerUser -e raju.g1233@gmail.com -p $dockerPassword"
-    sh "docker tag $containerName:$tag $dockerUser/$containerName:$tag"
-    sh "docker push $dockerUser/$containerName:$tag"
+    bat "docker login -u $dockerUser -e raju.g1233@gmail.com -p $dockerPassword"
+    bat "docker tag $containerName:$tag $dockerUser/$containerName:$tag"
+    bat "docker push $dockerUser/$containerName:$tag"
     echo "Image push complete"
 }
 
 def runApp(containerName, tag, dockerHubUser, httpPort){
-    sh "docker pull $dockerHubUser/$containerName"
-    sh "docker run -d --rm -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag"
+    bat "docker pull $dockerHubUser/$containerName"
+    bat "docker run -d --rm -p $httpPort:$httpPort --name $containerName $dockerHubUser/$containerName:$tag"
     echo "Application started on port: ${httpPort} (http)"
 }
 
@@ -80,8 +85,8 @@ def runApp(containerName, tag, dockerHubUser, httpPort){
 def deployKube(){
       //  sh "kubectl delete deployment appname"
       //  sh "kubectl delete service appname"
-        sh "kubectl run appname --image=docker.io/rajugade/ositest:latest --port=8080"
-        sh "kubectl get deployments"
-        sh "kubectl expose deployment appname --type=NodePort"
+        bat "kubectl run appname --image=docker.io/rajugade/ositest:latest --port=8080"
+        bat "kubectl get deployments"
+        bat "kubectl expose deployment appname --type=NodePort"
   
 }
